@@ -2,12 +2,14 @@ const express = require('express')
 const app = express()
 const port = 3001
 
+app.use(express.json())
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
 app.get('/api/users', (req, res) => {
   res.json(users)
+  
 })
 
 app.get('/api/users/:id', (req, res) => {
@@ -20,14 +22,33 @@ app.get('/api/users/:id', (req, res) => {
   }
 })
 
+app.post('/api/users', (req, res) => {
+  const user = req.body
+  console.log(user);
+
+  const ids = users.map(usr => usr.id) //array de ids
+  const idMax = Math.max(...ids)
+
+  const newUser = {
+    id: idMax +1,
+    name: user.name,
+    username: user.name,
+    email: user.email
+  }
+
+  users = [...users, newUser]
+  res.json(newUser)
+})
+
 app.delete('/api/users/:id', (req, res) =>{
   const id = Number(req.params.id)
   users = users.filter(u => u.id !== id)
+  console.log('eliminado usuario de id:', id);
   res.status(204).end()
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Topo app listening on port ${port}`)
 })
 
 /* VANILLA NODEJS
@@ -49,69 +70,18 @@ let users = [
     "name": "Ivan Garcia",
     "username": "topoescobar",
     "email": "Sincere@april.biz",
-    "address": {
-      "street": "Kulas Light",
-      "suite": "Apt. 556",
-      "city": "Gwenborough",
-      "zipcode": "92998-3874",
-      "geo": {
-        "lat": "-37.3159",
-        "lng": "81.1496"
-      }
-    },
-    "phone": "1-770-736-8031 x56442",
-    "website": "hildegard.org",
-    "company": {
-      "name": "Romaguera-Crona",
-      "catchPhrase": "Multi-layered client-server neural-net",
-      "bs": "harness real-time e-markets"
-    }
   },
   {
     "id": 2,
     "name": "Ervin Howell",
     "username": "Antonette",
     "email": "Shanna@melissa.tv",
-    "address": {
-      "street": "Victor Plains",
-      "suite": "Suite 879",
-      "city": "Wisokyburgh",
-      "zipcode": "90566-7771",
-      "geo": {
-        "lat": "-43.9509",
-        "lng": "-34.4618"
-      }
     },
-    "phone": "010-692-6593 x09125",
-    "website": "anastasia.net",
-    "company": {
-      "name": "Deckow-Crist",
-      "catchPhrase": "Proactive didactic contingency",
-      "bs": "synergize scalable supply-chains"
-    }
-  },
   {
     "id": 3,
     "name": "Clementine Bauch",
     "username": "Samantha",
     "email": "Nathan@yesenia.net",
-    "address": {
-      "street": "Douglas Extension",
-      "suite": "Suite 847",
-      "city": "McKenziehaven",
-      "zipcode": "59590-4157",
-      "geo": {
-        "lat": "-68.6102",
-        "lng": "-47.0653"
-      }
-    },
-    "phone": "1-463-123-4447",
-    "website": "ramiro.info",
-    "company": {
-      "name": "Romaguera-Jacobson",
-      "catchPhrase": "Face to face bifurcated interface",
-      "bs": "e-enable strategic applications"
-    }
   },
 ]
   
