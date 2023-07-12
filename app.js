@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const port = 3001
+let users = require('./users')
 
 app.use(express.json())
 app.get('/', (req, res) => {
@@ -9,12 +10,11 @@ app.get('/', (req, res) => {
 
 app.get('/api/users', (req, res) => {
   res.json(users)
-  
 })
 
 app.get('/api/users/:id', (req, res) => {
-  const id = Number(req.params.id) //se debe transformar en number porque el id recibido viene como string
-  const user = users.find(userDB => userDB.id === id) 
+  const id = Number(req.params.id) // se debe transformar en number porque el id recibido viene como string
+  const user = users.find(userDB => userDB.id === id)
   if (user) {
     res.json(user)
   } else {
@@ -24,26 +24,30 @@ app.get('/api/users/:id', (req, res) => {
 
 app.post('/api/users', (req, res) => {
   const user = req.body
-  console.log(user);
 
-  const ids = users.map(usr => usr.id) //array de ids
+  if (!user || !user.username) {
+    return res.status(400).json({
+      error: 'required username'
+    })
+  }
+  const ids = users.map(usr => usr.id) // array de ids
   const idMax = Math.max(...ids)
 
   const newUser = {
-    id: idMax +1,
+    id: idMax + 1,
     name: user.name,
     username: user.name,
     email: user.email
   }
 
   users = [...users, newUser]
-  res.json(newUser)
+  res.status(201).json(newUser)
 })
 
-app.delete('/api/users/:id', (req, res) =>{
+app.delete('/api/users/:id', (req, res) => {
   const id = Number(req.params.id)
   users = users.filter(u => u.id !== id)
-  console.log('eliminado usuario de id:', id);
+  console.log('eliminado usuario de id:', id)
   res.status(204).end()
 })
 
@@ -62,26 +66,3 @@ server.listen(port, hostname, () => {
   console.log(`Topo app, server running at http://${hostname}:${port}/`);
 });
 */
-
-
-let users = [
-  {
-    "id": 1,
-    "name": "Ivan Garcia",
-    "username": "topoescobar",
-    "email": "Sincere@april.biz",
-  },
-  {
-    "id": 2,
-    "name": "Ervin Howell",
-    "username": "Antonette",
-    "email": "Shanna@melissa.tv",
-    },
-  {
-    "id": 3,
-    "name": "Clementine Bauch",
-    "username": "Samantha",
-    "email": "Nathan@yesenia.net",
-  },
-]
-  
