@@ -1,20 +1,22 @@
 const express = require('express')
 const app = express()
 const port = 3001
-let users = require('./users')
+const cors = require('cors')
+let taskArr = require('./database')
 
+app.use(cors()) // middleware que permite funcionar con cualquier origen
 app.use(express.json())
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.get('/api/users', (req, res) => {
-  res.json(users)
+app.get('/api/tasks', (req, res) => {
+  res.json(taskArr)
 })
 
-app.get('/api/users/:id', (req, res) => {
+app.get('/api/tasks/:id', (req, res) => {
   const id = Number(req.params.id) // se debe transformar en number porque el id recibido viene como string
-  const user = users.find(userDB => userDB.id === id)
+  const user = taskArr.find(userDB => userDB.id === id)
   if (user) {
     res.json(user)
   } else {
@@ -22,32 +24,32 @@ app.get('/api/users/:id', (req, res) => {
   }
 })
 
-app.post('/api/users', (req, res) => {
-  const user = req.body
+app.post('/api/tasks/', (req, res) => {
+  const taskReq = req.body
 
-  if (!user || !user.username) {
+  if (!taskReq || !taskReq.title) {
     return res.status(400).json({
-      error: 'required username'
+      error: 'required task title'
     })
   }
-  const ids = users.map(usr => usr.id) // array de ids
+  const ids = taskArr.map(usr => usr.id) // array de ids
   const idMax = Math.max(...ids)
 
-  const newUser = {
+  const newTask = {
     id: idMax + 1,
-    name: user.name,
-    username: user.name,
-    email: user.email
+    title: taskReq.title,
+    description: taskReq.description,
+    done: taskReq.done
   }
 
-  users = [...users, newUser]
-  res.status(201).json(newUser)
+  taskArr = [...taskArr, newTask]
+  res.status(201).json(newTask)
 })
 
-app.delete('/api/users/:id', (req, res) => {
+app.delete('/api/tasks/:id', (req, res) => {
   const id = Number(req.params.id)
-  users = users.filter(u => u.id !== id)
-  console.log('eliminado usuario de id:', id)
+  taskArr = taskArr.filter(u => u.id !== id)
+  console.log('eliminado tarea de id:', id)
   res.status(204).end()
 })
 
