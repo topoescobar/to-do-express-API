@@ -1,11 +1,12 @@
 const express = require('express')
 const app = express()
-const port = 3001
+const port = process.env.PORT || 3001
 const cors = require('cors')
 let taskArr = require('./database')
 
 app.use(cors()) // middleware que permite funcionar con cualquier origen
 app.use(express.json())
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
