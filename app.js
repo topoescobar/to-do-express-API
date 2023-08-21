@@ -1,10 +1,10 @@
+require('./mongo') //lo importa y ejecuta una vez conectandose a la BD
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3001
 const cors = require('cors')
-
-let taskArr = require('./database')
-
+const Task = require('./models/Task')
+//let taskArr = require('./database')
 
 app.use(cors()) // middleware que permite funcionar con cualquier origen
 app.use(express.json())
